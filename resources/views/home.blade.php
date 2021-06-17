@@ -34,13 +34,13 @@
                     <form action="{{ route('file.upload.post') }}" method="POST" enctype="multipart/form-data" id="processFile" name="processFile" >
                         @csrf
                         <div class="form-group row">
-                            <label for="text" class="col-4 col-form-label">Name to save the converted file</label>
+                            <label for="text" class="col-4 col-form-label">Name to save the converted file *</label>
                             <div class="col-8">
                                 <input id="text" name="file_name" placeholder="Please enter name for the converted file. ex : test convert" type="text" class="form-control" required="required">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="text" class="col-4 col-form-label">File</label>
+                            <label for="text" class="col-4 col-form-label">File *</label>
                             <div class="col-8">
                                 <input type="file" name="file" class="form-control">  </div>
                         </div>
@@ -82,64 +82,73 @@
     <script>
 
         $("#submit-btn").click(function(){
-            console.log('submitted');
+            var file_name = document.forms["processFile"]["file_name"].value;
+            var file_input = document.forms["processFile"]["file"].value;
 
-            $("#progress-area").show();
-            $("#submit-btn").attr("disabled", true);
-            var form = document.forms.namedItem("processFile");
-            var formdata = new FormData(form);
+            if ((file_name == null || file_name == "") || (file_input == null || file_input == "") ) {
+                alert("Please Fill All Required Fields");
+                return false;
+            }else{
+                $("#progress-area").show();
+                $("#submit-btn").attr("disabled", true);
+                var form = document.forms.namedItem("processFile");
+                var formdata = new FormData(form);
 
-            $.ajax({
-                xhr: function() {
-                    var xhr = new window.XMLHttpRequest();
-                    //Upload progress
-                    xhr.upload.addEventListener("progress", function(evt) {
-                        if (evt.lengthComputable) {
-                            var percentComplete = evt.loaded / evt.total;
-                            $(".progress-bar").width(Math.round(percentComplete * 100) + "%");
-                            $(".progress-info-text").text(`file uploaded ${Math.round(percentComplete * 100)}%`);
-                            if (Math.round(percentComplete * 100) == 100) {
-                                $(".progress-info-text").text("Starting mp3 conversion...");
+                $.ajax({
+                    xhr: function() {
+                        var xhr = new window.XMLHttpRequest();
+                        //Upload progress
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total;
+                                $(".progress-bar").width(Math.round(percentComplete * 100) + "%");
+                                $(".progress-info-text").text(`file uploaded ${Math.round(percentComplete * 100)}%`);
+                                if (Math.round(percentComplete * 100) == 100) {
+                                    $(".progress-info-text").text("Starting mp3 conversion...");
+                                }
                             }
+                        }, false);
+                        return xhr;
+                    },
+                    beforeSend: function(){
+                        $("#progress-area").hide();
+                        $("#spinner-area").removeAttr("hidden");
+
+                    },
+                    async: true,
+                    type: "POST",
+                    url: '{{url("/file-upload")}}',
+                    enctype: 'multipart/form-data',
+                    dataType: "json",
+                    contentType: false,
+                    data: formdata,
+                    processData: false,
+                    success: function(responceData) {
+                        $('#spinner-area').hide();
+                        $('#processFile').trigger("reset");
+
+                        if (responceData[0]) {
+                            var download_btn;
+                            var convert_another_btn;
+                            let url = "{{ route('file.download.output', ':id') }}";
+                            url = url.replace(':id', responceData[1]);
+
+                            download_btn = "<a class='btn btn-primary' href='"+url+"'>Download</a>";
+                            convert_another_btn = "<a class='btn btn-primary' href='/home'>Convert another file</a>";
+
+                            document.getElementById("downloadBtn").innerHTML=download_btn;
+                            document.getElementById("convertAnother").innerHTML=convert_another_btn;
+                        } else {
+                            alert('Something went wrong with your file conversion please try again later.')
+                            window.location.reload();
                         }
-                    }, false);
-                    return xhr;
-                },
-                beforeSend: function(){
-                    $("#progress-area").hide();
-                    $("#spinner-area").removeAttr("hidden");
 
-                },
-                async: true,
-                type: "POST",
-                url: '{{url("/file-upload")}}',
-                enctype: 'multipart/form-data',
-                dataType: "json",
-                contentType: false,
-                data: formdata,
-                processData: false,
-                success: function(responceData) {
-                    $('#spinner-area').hide();
-                    $('#processFile').trigger("reset");
-
-                    if (responceData[0]) {
-                        var download_btn;
-                        var convert_another_btn;
-                        let url = "{{ route('file.download.output', ':id') }}";
-                        url = url.replace(':id', jobId);
-
-                        download_btn = "<a class='btn btn-primary' href='"+url+"'>Download</a>";
-                        convert_another_btn = "<a class='btn btn-primary' href='/home'>Convert another file</a>";
-
-                        document.getElementById("downloadBtn").innerHTML=download_btn;
-                        document.getElementById("convertAnother").innerHTML=convert_another_btn;
-                    } else {
-                        alert('Something went wrong with your file conversion please try again later.')
-                        window.location.reload();
                     }
+                });
 
-                }
-            });
+            }
+
+
         });
     </script>
 @endsection
