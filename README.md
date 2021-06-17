@@ -7,18 +7,6 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Setup Information
-
-Project is being uploaded to github. The setup instructions as follows.
-- Clone the repository from - https://github.com/pasanks/MacroActiveTask.git.
-- Navigate to the cloned project.
-- Run "composer install.
-- Add the .env file and change DB information accordingly.
-- Run "php artisan migrate".
-- Run "php artisan key:generate".
-- To work emails properly you have to update related SMTP settings in the .env  
-- You may need to configure some permissions. Directories within the storage and the bootstrap/cache directories should be writable by your web server or Laravel will not run.
-
 
 
 ## Known Limitations and Issues
@@ -38,6 +26,22 @@ There are some known limitations and issues that SHOULD be addressed.
 - Unit tests should be implemented.
 - Since I'm not that familiar with JS frontend frameworks, I used bootstrap for the frontend.
 
+## Setup Information
+
+Project is being uploaded to github. The setup instructions as follows.
+- Clone the repository from - https://github.com/pasanks/MacroActiveTask.git.
+- Navigate to the cloned project.
+- Run "composer install.
+- Add the .env file and change DB information accordingly.
+- Run "php artisan migrate".
+- Run "php artisan key:generate".
+- To work emails properly you have to update related SMTP settings in the .env
+- You may need to configure some permissions. Directories within the storage and the bootstrap/cache directories should be writable by your web server or Laravel will not run.
+
+## Additional ENV parameters
+Additinal ENV parameters
+- CLOUDCONVERT_API_KEY : API key for cloudconvert
+- CLOUDCONVERT_SANDBOX : Set this true for sandbox use , false for live
 
 ## License
 
