@@ -74,8 +74,11 @@ class FileProcessController extends Controller
 
             $downloadFile = public_path() . "/file_outputs/" . $jobID . '.mp3';
             $details = [
-                'title' => 'Your file conversion job is completed',
-                'body' => 'This is for testing email using smtp'
+                'title'       => 'Your file conversion job is completed',
+                'job_id'      => $jobID,
+                'user_name'   => Auth::user()->name,
+                'job_number'  => $saveJobDetails->job_number,
+                'job_status'  => 'Success',
             ];
             $mailDetails = new \App\Mail\JobCompletionEmail($details);
             sendEmail(Auth::user()->email, $mailDetails);
