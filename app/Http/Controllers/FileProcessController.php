@@ -30,19 +30,19 @@ class FileProcessController extends Controller
     {
         $fileConvertName = $request->get('file_name');
         $file = $request->file('file');
+
+        $saveJobDetails = new ConvertJob();
+        $saveJobDetails->user_id = Auth::user()->id;
+        $saveJobDetails->job_number = generateRandomJobID();
+        $saveJobDetails->file_download_name = $fileConvertName;
+        $saveJobDetails->save();
+
+        $jobID = $saveJobDetails->id;
         try {
             $cloudconvert = new CloudConvert([
                 'api_key' => Config::get('cloudconvert.api_key'),
                 'sandbox' => Config::get('cloudconvert.sandbox')
             ]);
-
-            $saveJobDetails = new ConvertJob();
-            $saveJobDetails->user_id = Auth::user()->id;
-            $saveJobDetails->job_number = generateRandomJobID();
-            $saveJobDetails->file_download_name = $fileConvertName;
-            $saveJobDetails->save();
-
-            $jobID = $saveJobDetails->id;
 
             $job = (new Job())
                 ->addTask(new Task('import/upload', 'upload-' . $jobID))
@@ -62,7 +62,6 @@ class FileProcessController extends Controller
             $cloudconvert->jobs()->wait($job); // Wait for job completion
 
             foreach ($job->getExportUrls() as $file) {
-
                 $source = $cloudconvert->getHttpTransport()->download($file->url)->detach();
                 $dest = fopen(public_path() . '/file_outputs/' . $jobID . ".mp3", 'w');
 
@@ -73,20 +72,42 @@ class FileProcessController extends Controller
             ConvertJob::updateJobStatus($jobID, 1, $outputFile);
 
             $downloadFile = public_path() . "/file_outputs/" . $jobID . '.mp3';
-            $details = [
-                'title'       => 'Your file conversion job is completed',
-                'job_id'      => $jobID,
-                'user_name'   => Auth::user()->name,
-                'job_number'  => $saveJobDetails->job_number,
-                'job_status'  => 'Success',
-            ];
-            $mailDetails = new \App\Mail\JobCompletionEmail($details);
+            $mailDetails = new \App\Mail\JobCompletionEmail($this->getDetailsForJobCompletionEmail(
+                $jobID,
+                $saveJobDetails,
+                'Success'
+            ));
             sendEmail(Auth::user()->email, $mailDetails);
-            return $jobID;
+            return [true, $jobID];
         } catch (\Exception $ex) {
             Log::alert('An error Occurred while processing the file : ' . $ex->getMessage());
+            $mailDetails = new \App\Mail\JobCompletionEmail($this->getDetailsForJobCompletionEmail(
+                $jobID,
+                $saveJobDetails,
+                'Failed'
+            ));
+            sendEmail(Auth::user()->email, $mailDetails);
             ConvertJob::updateJobStatus($jobID, 2);
+            return [false, $jobID];
         }
+    }
+
+    public function getDetailsForJobCompletionEmail($jobID, $saveJobDetails, $status)
+    {
+        if ($status == 'Success') {
+            $downloadUrl = Config::get('app.url').'/file-download/'.$jobID;
+        } else {
+            $downloadUrl = 'Not available';
+        }
+        $details = [
+            'title'    => 'Your file conversion job is completed',
+            'job_id'   => $jobID,
+            'user_name'   => Auth::user()->name,
+            'job_number'  => $saveJobDetails->job_number,
+            'job_status'  => $status,
+            'download_url'=> $downloadUrl,
+        ];
+        return $details;
     }
 
     /**
@@ -99,7 +120,6 @@ class FileProcessController extends Controller
     {
         $jobDetails = ConvertJob::find($jobID);
         $downloadFile = public_path() . $jobDetails->output_file;
-
         return Response::download($downloadFile, $jobDetails->file_download_name . '.mp3');
     }
 
@@ -109,12 +129,12 @@ class FileProcessController extends Controller
      */
     public function jobHistoryView()
     {
-        $details = ConvertJob::select(['*'])->where('user_id',Auth::user()->id)
+        $details = ConvertJob::select(['*'])->where('user_id', Auth::user()->id)
             ->paginate(20);
         return view('job_history')->with([
             'details' => $details
         ]);
     }
-
-
 }
+
+

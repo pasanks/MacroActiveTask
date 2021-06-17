@@ -1,7 +1,8 @@
 <?php
 
 //job number generation for conversion jobs
-function generateRandomJobID($length = 10) {
+function generateRandomJobID($length = 10)
+{
     $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';
@@ -19,5 +20,6 @@ function sendEmail($toAddress, $mailDetails)
     } catch (\Exception $ex) {
         \Log::alert('Mail send error: '.$ex->getMessage());
     }
-
 }
+
+

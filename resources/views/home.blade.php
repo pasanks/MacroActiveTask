@@ -8,7 +8,7 @@
                 <div class="col-8">
                     <div class="panel-heading"><h2>Upload audio file and convert to mp3</h2></div>
                 </div>
-                <div class="col-4">
+                <div class="col-4" >
                     <a class='btn btn-primary' href='{{ route('file.job-history') }}'>Job history</a>
                 </div>
             </div>
@@ -80,7 +80,7 @@
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
         crossorigin="anonymous"></script>
     <script>
-        //    button click
+
         $("#submit-btn").click(function(){
             console.log('submitted');
 
@@ -118,20 +118,26 @@
                 contentType: false,
                 data: formdata,
                 processData: false,
-                success: function(jobId) {
+                success: function(responceData) {
                     $('#spinner-area').hide();
                     $('#processFile').trigger("reset");
 
-                    var download_btn;
-                    var convert_another_btn;
-                    let url = "{{ route('file.download.output', ':id') }}";
-                    url = url.replace(':id', jobId);
+                    if (responceData[0]) {
+                        var download_btn;
+                        var convert_another_btn;
+                        let url = "{{ route('file.download.output', ':id') }}";
+                        url = url.replace(':id', jobId);
 
-                    download_btn = "<a class='btn btn-primary' href='"+url+"'>Download</a>";
-                    convert_another_btn = "<a class='btn btn-primary' href='/home'>Convert another file</a>";
+                        download_btn = "<a class='btn btn-primary' href='"+url+"'>Download</a>";
+                        convert_another_btn = "<a class='btn btn-primary' href='/home'>Convert another file</a>";
 
-                    document.getElementById("downloadBtn").innerHTML=download_btn;
-                    document.getElementById("convertAnother").innerHTML=convert_another_btn;
+                        document.getElementById("downloadBtn").innerHTML=download_btn;
+                        document.getElementById("convertAnother").innerHTML=convert_another_btn;
+                    } else {
+                        alert('Something went wrong with your file conversion please try again later.')
+                        window.location.reload();
+                    }
+
                 }
             });
         });
