@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\JobCompletionEmail;
 use App\Models\ConvertJob;
 use Illuminate\Http\Request;
 use CloudConvert\CloudConvert;
@@ -9,6 +10,7 @@ use \CloudConvert\Models\Job;
 use \CloudConvert\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use \App\Mail;
 use Response;
 use Log;
 
@@ -81,7 +83,7 @@ class FileProcessController extends Controller
             return [true, $jobID];
         } catch (\Exception $ex) {
             Log::alert('An error Occurred while processing the file : ' . $ex->getMessage());
-            $mailDetails = new \App\Mail\JobCompletionEmail($this->getDetailsForJobCompletionEmail(
+            $mailDetails = new JobCompletionEmail($this->getDetailsForJobCompletionEmail(
                 $jobID,
                 $saveJobDetails,
                 'Failed'
