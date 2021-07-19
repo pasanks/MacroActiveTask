@@ -6,17 +6,16 @@ use App\Mail\JobCompletionEmail;
 use App\Models\ConvertJob;
 use Illuminate\Http\Request;
 use CloudConvert\CloudConvert;
-use \CloudConvert\Models\Job;
-use \CloudConvert\Models\Task;
+use CloudConvert\Models\Job;
+use CloudConvert\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use \App\Mail;
+use App\Mail;
 use Response;
 use Log;
 
 class FileProcessController extends Controller
 {
-
     public function fileConvertForm()
     {
         return view('home');
@@ -138,5 +137,3 @@ class FileProcessController extends Controller
         ]);
     }
 }
-
-
