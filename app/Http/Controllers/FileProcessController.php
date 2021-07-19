@@ -96,7 +96,7 @@ class FileProcessController extends Controller
     public function getDetailsForJobCompletionEmail($jobID, $saveJobDetails, $status)
     {
         if ($status == 'Success') {
-            $downloadUrl = Config::get('app.url').'/file-download/'.$jobID;
+            $downloadUrl = Config::get('app.url') . '/file-download/' . $jobID;
         } else {
             $downloadUrl = 'Not available';
         }
@@ -106,7 +106,7 @@ class FileProcessController extends Controller
             'user_name'   => Auth::user()->name,
             'job_number'  => $saveJobDetails->job_number,
             'job_status'  => $status,
-            'download_url'=> $downloadUrl,
+            'download_url' => $downloadUrl,
         ];
         return $details;
     }
