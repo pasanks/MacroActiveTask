@@ -9,7 +9,8 @@ use Illuminate\Queue\SerializesModels;
 
 class JobCompletionEmail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $details;
     /**
@@ -29,7 +30,6 @@ class JobCompletionEmail extends Mailable
      */
     public function build()
     {
-
         return $this->subject('Your file conversion job is completed')
             ->view('emails.job_completion_email');
     }

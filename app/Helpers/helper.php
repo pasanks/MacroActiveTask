@@ -21,5 +21,3 @@ function sendEmail($toAddress, $mailDetails)
         \Log::alert('Mail send error: '.$ex->getMessage());
     }
 }
-
-
