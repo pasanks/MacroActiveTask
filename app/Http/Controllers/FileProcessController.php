@@ -10,7 +10,6 @@ use CloudConvert\Models\Job;
 use CloudConvert\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-
 use Response;
 use Log;
 
