@@ -13,8 +13,8 @@ class ConvertJob extends Model
     public static function updateJobStatus($jobId, $status, $outputFile = null)
     {
         self::where('id', $jobId)->update([
-            'status'      => $status,
-            'output_file' => $outputFile
+            'status' => $status,
+            'output_file' => $outputFile,
         ]);
     }
 }

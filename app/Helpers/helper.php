@@ -9,7 +9,7 @@ function generateRandomJobID($length = 10)
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-    return $randomString . "-" . date('Ymdhis');
+    return $randomString . '-' . date('Ymdhis');
 }
 
 //mail sending helper
