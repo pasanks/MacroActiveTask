@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Actions\AudioConvert;
 use App\Actions\DownloadFile;
-use App\Mail\JobCompletionEmail;
 use App\Models\ConvertJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Log;
 
 class FileProcessController extends Controller
