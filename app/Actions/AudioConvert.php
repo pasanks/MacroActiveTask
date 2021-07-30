@@ -62,5 +62,4 @@ class AudioConvert
             stream_copy_to_stream($source, $dest);
         }
     }
-
 }
