@@ -12,7 +12,7 @@ class JobCompletionEmail extends Mailable
     use Queueable;
     use SerializesModels;
 
-    private $details;
+    protected $details;
     /**
      * Create a new message instance.
      *

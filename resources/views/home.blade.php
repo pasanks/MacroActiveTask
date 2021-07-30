@@ -127,11 +127,11 @@
                         $('#spinner-area').hide();
                         $('#processFile').trigger("reset");
 
-                        if (responceData[0]) {
+                        if (responceData['status']) {
                             var download_btn;
                             var convert_another_btn;
                             let url = "{{ route('file.download.output', ':id') }}";
-                            url = url.replace(':id', responceData[1]);
+                            url = url.replace(':id', responceData['job_id']);
 
                             download_btn = "<a class='btn btn-primary' href='"+url+"'>Download</a>";
                             convert_another_btn = "<a class='btn btn-primary' href='/home'>Convert another file</a>";
